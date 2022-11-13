@@ -36,10 +36,10 @@ kotlin {
             baseName = "GRPCKotlinMultiplatform"
         }
 
-        ios.deploymentTarget = "9.0"
+        ios.deploymentTarget = "14.0"
 
-        pod("gRPC-ProtoRPC", version = "~> 1.50.0-pre1", moduleName = "GRPCClient")
-        pod("Protobuf", version = "~> 3.21.7", moduleName = "Protobuf")
+        pod("gRPC-ProtoRPC", version = "~> 1.50.0", moduleName = "GRPCClient")
+        pod("Protobuf", version = "~> 3.21.9", moduleName = "Protobuf")
         //pod("gRPC-Core")
     }
 
@@ -47,7 +47,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
         val commonTest by getting {
@@ -57,9 +57,9 @@ kotlin {
             }
         }
 
-        val GRPC = "1.49.1"
+        val GRPC = "1.50.0"
         val GRPC_KOTLIN = "1.3.0"
-        val PROTOBUF = "3.21.6"
+        val PROTOBUF = "3.21.9"
 
         val androidJvmCommon by creating {
             dependencies {
@@ -138,3 +138,5 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
         binaryOptions["memoryModel"] = "experimental"
     }
 }
+
+tasks.replace("podGenIOS", PatchedPodGenTask::class)
