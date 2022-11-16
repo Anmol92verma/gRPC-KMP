@@ -38,8 +38,8 @@ kotlin {
 
         ios.deploymentTarget = "14.0"
 
-        pod("gRPC-ProtoRPC", version = "~> 1.50.0", moduleName = "GRPCClient")
-        pod("Protobuf", version = "~> 3.21.9", moduleName = "Protobuf")
+        pod("gRPC-ProtoRPC", version = "~> 1.49.0", moduleName = "GRPCClient")
+        pod("Protobuf", version = "~> 3.21.6", moduleName = "Protobuf")
         //pod("gRPC-Core")
     }
 
@@ -59,7 +59,7 @@ kotlin {
 
         val GRPC = "1.50.0"
         val GRPC_KOTLIN = "1.3.0"
-        val PROTOBUF = "3.21.9"
+        val PROTOBUF = "3.21.6"
 
         val androidJvmCommon by creating {
             dependencies {
