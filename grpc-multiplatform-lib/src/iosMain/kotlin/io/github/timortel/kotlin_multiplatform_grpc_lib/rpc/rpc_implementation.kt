@@ -9,6 +9,7 @@ import io.github.timortel.kotlin_multiplatform_grpc_lib.KMStatusException
 import io.github.timortel.kotlin_multiplatform_grpc_lib.message.KMMessage
 import io.github.timortel.kotlin_multiplatform_grpc_lib.message.MessageDeserializer
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import platform.Foundation.NSData
 import platform.Foundation.NSError
@@ -147,7 +148,7 @@ fun <REQ : KMMessage, RES : KMMessage> serverSideNonSuspendingStreamingCallImple
         call.writeData(request.serialize())
         call.finish()
 
-        invokeOnClose {
+        awaitClose {
             call.cancel()
         }
     }
