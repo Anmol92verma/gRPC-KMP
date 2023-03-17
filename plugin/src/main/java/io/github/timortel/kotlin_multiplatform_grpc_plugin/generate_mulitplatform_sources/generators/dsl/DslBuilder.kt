@@ -42,9 +42,6 @@ abstract class DslBuilder(private val isActual: Boolean) {
                 .addModifiers(modifier)
                 .primaryConstructor(
                     FunSpec.constructorBuilder()
-                        .apply {
-                            if (isActual) addModifiers(KModifier.ACTUAL)
-                        }
                         .build()
                 )
                 .apply {
