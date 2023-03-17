@@ -21,6 +21,9 @@ jobs:
         with:
           java-version: 11
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Release plugin
         run: ./gradlew plugin:publish
 
