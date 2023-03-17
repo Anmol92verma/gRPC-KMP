@@ -1,6 +1,8 @@
 package io.github.timortel.kotlin_multiplatform_grpc_lib.rpc
 
 import cocoapods.GRPCClient.GRPCCall2
+import cocoapods.GRPCClient.GRPCCallOptions
+import cocoapods.GRPCClient.GRPCMutableCallOptions
 import cocoapods.GRPCClient.GRPCResponseHandlerProtocol
 import io.github.timortel.kotlin_multiplatform_grpc_lib.KMChannel
 import io.github.timortel.kotlin_multiplatform_grpc_lib.KMCode
@@ -9,6 +11,7 @@ import io.github.timortel.kotlin_multiplatform_grpc_lib.KMStatusException
 import io.github.timortel.kotlin_multiplatform_grpc_lib.message.KMMessage
 import io.github.timortel.kotlin_multiplatform_grpc_lib.message.MessageDeserializer
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import platform.Foundation.NSData
 import platform.Foundation.NSError
@@ -21,9 +24,10 @@ import kotlin.coroutines.suspendCoroutine
 @Throws(KMStatusException::class, CancellationException::class)
 suspend fun <REQ : KMMessage, RES : KMMessage> unaryCallImplementation(
     channel: KMChannel,
+    callOptions: GRPCCallOptions,
     path: String,
     request: REQ,
-    responseDeserializer: MessageDeserializer<RES>
+    responseDeserializer: MessageDeserializer<RES, NSData>
 ): RES {
     val data = request.serialize()
 
@@ -48,7 +52,7 @@ suspend fun <REQ : KMMessage, RES : KMMessage> unaryCallImplementation(
         val call = GRPCCall2(
             requestOptions = channel.buildRequestOptions(path),
             responseHandler = handler,
-            callOptions = channel.callOptions
+            callOptions = channel.applyToCallOptions(callOptions)
         )
 
         call.start()
@@ -58,61 +62,41 @@ suspend fun <REQ : KMMessage, RES : KMMessage> unaryCallImplementation(
     }
 }
 
-private sealed class StreamingResponse<T : KMMessage> {
-    class Message<T : KMMessage>(val msg: T) : StreamingResponse<T>()
-    class StatusException<T : KMMessage>(val exception: KMStatusException) : StreamingResponse<T>()
-}
-
-suspend fun <REQ : KMMessage, RES : KMMessage> serverSideStreamingCallImplementation(
+fun <REQ : KMMessage, RES : KMMessage> serverSideStreamingCallImplementation(
     channel: KMChannel,
+    callOptions: GRPCCallOptions,
     path: String,
     request: REQ,
-    responseDeserializer: MessageDeserializer<RES>
+    responseDeserializer: MessageDeserializer<RES, NSData>
 ): Flow<RES> {
-    val flow = MutableSharedFlow<StreamingResponse<RES>>()
-    val isDone = MutableStateFlow(false)
+    return callbackFlow {
+        val handler = CallHandler(
+            onReceive = { data ->
+                val msg = responseDeserializer.deserialize(data as NSData)
 
-    val scope = CoroutineScope(coroutineContext)
+                trySend(msg)
+            },
+            onError = { error ->
+                val exception = KMStatusException(
+                    KMStatus(KMCode.getCodeForValue(error.code.toInt()), error.description ?: "No description"),
+                    null
+                )
 
-    val handler = CallHandler(
-        onReceive = { data ->
-            val msg = responseDeserializer.deserialize(data as NSData)
-            scope.launch {
-                flow.emit(StreamingResponse.Message(msg))
+                close(exception)
+            },
+            onDone = {
+                close()
             }
-        },
-        onError = { error ->
-            val exception = KMStatusException(
-                KMStatus(KMCode.getCodeForValue(error.code.toInt()), error.description ?: "No description"),
-                null
-            )
+        )
 
-            scope.launch {
-                flow.emit(StreamingResponse.StatusException(exception))
-            }
-        },
-        onDone = {
-            isDone.value = true
-        }
-    )
+        val call = GRPCCall2(channel.buildRequestOptions(path), handler, channel.applyToCallOptions(callOptions))
 
-    val call = GRPCCall2(channel.buildRequestOptions(path), handler, channel.callOptions)
+        call.start()
+        call.writeData(request.serialize())
+        call.finish()
 
-    call.start()
-    call.writeData(request.serialize())
-    call.finish()
-
-    return isDone.takeWhile { !it }.transform {
-        flow.collect { response ->
-            when (response) {
-                is StreamingResponse.Message -> emit(response.msg)
-                is StreamingResponse.StatusException -> throw response.exception
-            }
-        }
-    }.onCompletion {
-        try {
-            scope.cancel()
-        } catch (_: IllegalStateException) {
+        awaitClose {
+            call.cancel()
         }
     }
 }

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.timortel"
-version = "0.2.2"
+version = "0.3.1"
 
 repositories {
     mavenCentral()
@@ -61,11 +61,17 @@ kotlin {
         val GRPC_KOTLIN = "1.3.0"
         val PROTOBUF = "3.21.6"
 
+        val iosJvmCommon by creating {
+            dependsOn(commonMain)
+        }
+
         val androidJvmCommon by creating {
             dependencies {
                 implementation("com.google.protobuf:protobuf-kotlin:${PROTOBUF}")
             }
+            dependsOn(iosJvmCommon)
         }
+
 
         val jvmMain by getting {
             dependsOn(androidJvmCommon)
@@ -99,6 +105,7 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependsOn(commonMain)
+            dependsOn(iosJvmCommon)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
@@ -109,6 +116,11 @@ kotlin {
 publishing {
     repositories {
         mavenLocal()
+    }
+    repositories {
+        maven {
+            setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
+        }
     }
 }
 

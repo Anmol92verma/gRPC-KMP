@@ -8,6 +8,9 @@ import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatfor
 object Const {
     object Service {
 
+        const val CHANNEL_PROPERTY_NAME = "channel"
+        const val CALL_OPTIONS_PROPERTY_NAME = "callOptions"
+
         fun getName(service: ProtoService): String = "KM${service.serviceName.capitalize()}Stub"
 
         object Constructor {
@@ -15,7 +18,8 @@ object Const {
         }
 
         object JVM {
-            const val PROPERTY_JVM_IMPL = "impl"
+            const val PROPERTY_CHANNEL = "channel"
+            const val PROPERTY_CALL_OPTIONS = "callOptions"
 
             fun nativeServiceClassName(protoFile: ProtoFile, service: ProtoService): ClassName =
                 ClassName(
@@ -23,6 +27,12 @@ object Const {
                     service.serviceName.capitalize() + "GrpcKt",
                     service.serviceName.capitalize() + "CoroutineStub"
                 )
+
+            object Companion {
+                fun methodDescriptorPropertyName(service: ProtoService, rpc: ProtoRpc): String {
+                    return "methodDescriptor${rpc.rpcName.capitalize()}"
+                }
+            }
         }
 
         object JS {
@@ -33,10 +43,6 @@ object Const {
 
             fun nativeServiceClassName(protoFile: ProtoFile, service: ProtoService) =
                 ClassName(protoFile.pkg, jsServiceName(service))
-        }
-
-        object IOS {
-            const val CHANNEL_PROPERTY_NAME = "channel"
         }
 
         object RpcCall {
@@ -79,7 +85,7 @@ object Const {
                 fun getCaseFunctionName(oneOf: ProtoOneOf): String = "get${oneOf.name.lowercase().capitalize()}Case"
             }
 
-            object IOS {
+            object IosJvm {
                 const val REQUIRED_SIZE_PROPERTY_NAME = "requiredSize"
 
                 const val SERIALIZE_FUNCTION_NAME = "serialize"
@@ -128,7 +134,7 @@ object Const {
                         message.jsType.member("set${attr.name.lowercase().capitalize()}")
                 }
 
-                object IOS {
+                object IosJvm {
                     fun isMessageSetFunctionName(message: ProtoMessage, attr: ProtoMessageAttribute): String {
                         var name = "is${attr.capitalizedName}Set"
                         val attrNames = message.attributes.map { it.name }
@@ -243,7 +249,7 @@ object Const {
 
                 object WrapperDeserializationFunction {
                     const val NAME = "deserialize"
-                    const val WRAPPER_PARAM = "wrapper"
+                    const val STREAM_PARAM = "stream"
                 }
             }
         }

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.timortel"
-version = "0.2.2"
+version = "0.3.1"
 
 java {
     withSourcesJar()
@@ -27,7 +27,8 @@ gradlePlugin {
             displayName = "GRPC Kotlin Multiplatform Plugin"
             description = "Plugin that generates Kotlin multiplatform wrapper classes for GRPC"
 
-            implementationClass = "io.github.timortel.kotlin_multiplatform_grpc_plugin.GrpcMultiplatformPlugin"
+            implementationClass =
+                "io.github.timortel.kotlin_multiplatform_grpc_plugin.GrpcMultiplatformPlugin"
         }
     }
 }
@@ -35,6 +36,12 @@ gradlePlugin {
 publishing {
     repositories {
         mavenLocal()
+    }
+
+    repositories {
+        maven {
+            setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
+        }
     }
 
     publications {
@@ -54,7 +61,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    antlr("org.antlr:antlr4:4.10.1")
+    antlr("org.antlr:antlr4:4.11.1")
     implementation("org.antlr:antlr4:4.10.1")
 
     implementation("com.squareup:kotlinpoet:1.12.0")
@@ -69,6 +76,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
     dependsOn("generateGrammarSource")
 
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs =
+            listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.ExperimentalStdlibApi")
     }
 }
