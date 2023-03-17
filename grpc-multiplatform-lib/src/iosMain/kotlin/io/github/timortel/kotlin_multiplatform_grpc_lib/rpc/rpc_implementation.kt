@@ -101,42 +101,6 @@ fun <REQ : KMMessage, RES : KMMessage> serverSideStreamingCallImplementation(
     }
 }
 
-@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-fun <REQ : KMMessage, RES : KMMessage> serverSideNonSuspendingStreamingCallImplementation(
-    channel: KMChannel,
-    path: String,
-    request: REQ,
-    responseDeserializer: MessageDeserializer<RES>
-): Flow<RES> {
-    return callbackFlow {
-        val scope = this
-        val handler = CallHandler(
-            onReceive = { data ->
-                val msg = responseDeserializer.deserialize(data as NSData)
-                trySend(msg)
-            },
-            onError = { error ->
-                val exception = KMStatusException(
-                    KMStatus(KMCode.getCodeForValue(error.code.toInt()), error.description ?: "No description"),
-                    null
-                )
-                cancel(CancellationException(error.code.toString(), exception))
-            },
-            onDone = {
-                scope.close()
-            }
-        )
-        val call = GRPCCall2(channel.buildRequestOptions(path), handler, channel.callOptions)
-        call.start()
-        call.writeData(request.serialize())
-        call.finish()
-
-        invokeOnClose {
-            call.cancel()
-        }
-    }
-}
-
 private class CallHandler(
     private val onReceive: (data: Any) -> Unit,
     private val onError: (error: NSError) -> Unit,

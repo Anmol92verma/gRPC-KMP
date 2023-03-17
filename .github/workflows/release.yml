@@ -25,7 +25,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Release plugin
-        run: ./gradlew plugin:publish
+        run: ./gradlew :plugin:publish
 
       - name: Release grpc-multiplatform-lib
-        run: ./gradlew grpc-multiplatform-lib:publish
+        run: ./gradlew :grpc-multiplatform-lib:publish
