@@ -25,7 +25,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Release plugin
-        run: ./gradlew :plugin:publish
+        run: ./gradlew :plugin:publish -PGITHUB_USER=${{ secrets.CURRENT_GITHUB_USER }} -PGITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
       - name: Release grpc-multiplatform-lib
-        run: ./gradlew :grpc-multiplatform-lib:publish
+        run: ./gradlew :grpc-multiplatform-lib:publish -PGITHUB_USER=${{ secrets.CURRENT_GITHUB_USER }} -PGITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}

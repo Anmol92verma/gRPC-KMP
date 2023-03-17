@@ -13,6 +13,9 @@ repositories {
     google()
 }
 
+val GITHUB_USER: String by project
+val GITHUB_TOKEN: String by project
+
 kotlin {
     android("android") {
         publishLibraryVariants("release")
@@ -120,6 +123,10 @@ publishing {
     repositories {
         maven {
             setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
+            credentials {
+                username = GITHUB_USER
+                password = GITHUB_TOKEN
+            }
         }
     }
 }
