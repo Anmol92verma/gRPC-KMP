@@ -13,8 +13,8 @@ repositories {
     google()
 }
 
-val GITHUB_USER: String by project
-val GITHUB_TOKEN: String by project
+val GITHUB_USER: String? by project
+val GITHUB_TOKEN: String? by project
 
 kotlin {
     android("android") {
@@ -75,7 +75,6 @@ kotlin {
             dependsOn(iosJvmCommon)
         }
 
-
         val jvmMain by getting {
             dependsOn(androidJvmCommon)
             dependencies {
@@ -124,8 +123,8 @@ publishing {
         maven {
             setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
             credentials {
-                username = GITHUB_USER
-                password = GITHUB_TOKEN
+                username = GITHUB_USER ?: "oianmol"
+                password = GITHUB_TOKEN ?: ""
             }
         }
     }
