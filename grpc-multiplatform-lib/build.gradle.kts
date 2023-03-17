@@ -118,6 +118,11 @@ publishing {
     repositories {
         mavenLocal()
     }
+    repositories {
+        maven {
+            setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
+        }
+    }
 }
 
 android {
