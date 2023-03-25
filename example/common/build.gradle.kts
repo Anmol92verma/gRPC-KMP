@@ -1,18 +1,18 @@
 import io.github.timortel.kotlin_multiplatform_grpc_plugin.generate_mulitplatform_sources.GenerateMultiplatformSourcesTask
 
-val libVersion = "0.3.1"
+val libVersion = "0.3.2"
 
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    id("io.github.timortel.kotlin-multiplatform-grpc-plugin") version "0.3.1"
+    id("io.github.timortel.kotlin-multiplatform-grpc-plugin") version "0.3.2"
 }
 
 group = "io.github.timortel.grpc_multiplaform.example.common"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    commonMainApi("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:$libVersion")
+    commonMainApi("com.github.timortelfork.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:$libVersion")
 }
 
 repositories {
@@ -33,7 +33,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                api("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:$libVersion")
+                api("com.github.timortelfork.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:$libVersion")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
             }
 
@@ -42,7 +42,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                api("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib-jvm:$libVersion")
+                api("com.github.timortelfork.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib-jvm:$libVersion")
             }
 
             kotlin.srcDir(projectDir.resolve("build/generated/source/kmp-grpc/jvmMain/kotlin").canonicalPath)
@@ -50,7 +50,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib-js:$libVersion")
+                implementation("com.github.timortelfork.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib-js:$libVersion")
             }
             kotlin.srcDir(projectDir.resolve("build/generated/source/kmp-grpc/jsMain/kotlin").canonicalPath)
         }

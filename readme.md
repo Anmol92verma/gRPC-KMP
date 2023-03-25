@@ -171,7 +171,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                api("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:<latest version>")
+                api("com.github.timortelfork.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:<latest version>")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:<latest version>")
             }
         }

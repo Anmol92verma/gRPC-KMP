@@ -5,8 +5,8 @@ plugins {
     id("maven-publish")
 }
 
-group = "io.github.timortel"
-version = "0.3.1"
+group = "io.github.timortelfork"
+version = "0.3.2"
 
 repositories {
     mavenCentral()

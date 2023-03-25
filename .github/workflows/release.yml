@@ -5,7 +5,7 @@ on:
     paths-ignore:
       - '**.md'
     branches:
-      - 'release'
+      - 'master'
 
 jobs:
   buildPlugin:
