@@ -4,7 +4,6 @@ val libVersion = "0.3.1"
 
 plugins {
     kotlin("multiplatform")
-
     id("io.github.timortel.kotlin-multiplatform-grpc-plugin") version "0.3.1"
 }
 
@@ -12,12 +11,13 @@ group = "io.github.timortel.grpc_multiplaform.example.common"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    commonMainApi("com.github.TimOrtel.GRPC-Kotlin-Multiplatform:grpc-multiplatform-lib:$libVersion")
+    commonMainApi("io.github.timortel:grpc-multiplatform-lib:$libVersion")
 }
 
 repositories {
     mavenCentral()
     maven(url = "https://jitpack.io")
+    mavenLocal()
 }
 
 kotlin {

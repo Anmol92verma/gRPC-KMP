@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         google()
+        mavenLocal()
         gradlePluginPortal()
     }
 
@@ -16,6 +17,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
         maven(url = "https://jitpack.io")
     }

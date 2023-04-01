@@ -15,7 +15,7 @@ repositories {
 
 kotlin {
     android("android") {
-        publishLibraryVariants("release", "debug")
+        publishLibraryVariants("release")
     }
     js(IR) {
         browser()
@@ -38,8 +38,8 @@ kotlin {
 
         ios.deploymentTarget = "14.1"
 
-        pod("gRPC-ProtoRPC", moduleName = "GRPCClient")
-        pod("Protobuf", version = "~> 3.21", moduleName = "Protobuf")
+        pod("gRPC-ProtoRPC", version = "~> 1.49.0", moduleName = "GRPCClient")
+        pod("Protobuf", version = "~> 3.21.6", moduleName = "Protobuf")
         //pod("gRPC-Core")
     }
 
@@ -47,7 +47,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
         val commonTest by getting {
@@ -57,9 +57,9 @@ kotlin {
             }
         }
 
-        val GRPC = "1.46.0"
-        val GRPC_KOTLIN = "1.2.1"
-        val PROTOBUF = "3.20.1"
+        val GRPC = "1.50.0"
+        val GRPC_KOTLIN = "1.3.0"
+        val PROTOBUF = "3.21.6"
 
         val iosJvmCommon by creating {
             dependsOn(commonMain)
@@ -67,14 +67,15 @@ kotlin {
 
         val androidJvmCommon by creating {
             dependsOn(iosJvmCommon)
+            dependencies {
+                implementation("com.google.protobuf:protobuf-kotlin:${PROTOBUF}")
+            }
         }
 
 
         val jvmMain by getting {
             dependsOn(androidJvmCommon)
             dependencies {
-                implementation("com.google.protobuf:protobuf-kotlin:${PROTOBUF}")
-                implementation("com.google.protobuf:protobuf-java-util:${PROTOBUF}")
                 implementation("io.grpc:grpc-protobuf:${GRPC}")
                 implementation("io.grpc:grpc-stub:${GRPC}")
                 implementation("io.grpc:grpc-kotlin-stub:${GRPC_KOTLIN}")
@@ -83,12 +84,10 @@ kotlin {
 
         val androidMain by getting {
             dependsOn(androidJvmCommon)
-
             dependencies {
                 implementation("io.grpc:grpc-stub:${GRPC}")
-                implementation("io.grpc:grpc-protobuf-lite:${GRPC}")
+                implementation("io.grpc:grpc-protobuf:${GRPC}")
                 implementation("io.grpc:grpc-kotlin-stub:${GRPC_KOTLIN}")
-                implementation("com.google.protobuf:protobuf-kotlin-lite:${PROTOBUF}")
             }
         }
 
@@ -117,11 +116,6 @@ kotlin {
 publishing {
     repositories {
         mavenLocal()
-    }
-    repositories {
-        maven {
-            setUrl("https://maven.pkg.github.com/oianmol/gRPC-KMP")
-        }
     }
 }
 
