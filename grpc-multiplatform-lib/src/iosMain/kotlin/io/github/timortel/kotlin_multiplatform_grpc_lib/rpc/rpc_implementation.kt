@@ -108,7 +108,7 @@ private class CallHandler(
 ) :
     NSObject(), GRPCResponseHandlerProtocol {
 
-    override fun dispatchQueue(): dispatch_queue_t = null
+    override fun dispatchQueue() = null
 
     override fun didReceiveData(data: Any) = onReceive(data)
 

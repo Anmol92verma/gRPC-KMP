@@ -157,8 +157,6 @@ grpcKotlinMultiplatform {
     )
 }
 
-tasks.replace("podGenIOS", PatchedPodGenTask::class)
-
 tasks.findByName("jvmTest")?.let {
     it.doFirst {
         TestServer.start()

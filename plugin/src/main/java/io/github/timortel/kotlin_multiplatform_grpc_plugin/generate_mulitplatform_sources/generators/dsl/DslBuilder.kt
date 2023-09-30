@@ -42,6 +42,9 @@ abstract class DslBuilder(private val isActual: Boolean) {
                 .addModifiers(modifier)
                 .primaryConstructor(
                     FunSpec.constructorBuilder()
+                        .apply {
+                            if (isActual) addModifiers(KModifier.ACTUAL)
+                        }
                         .build()
                 )
                 .apply {
@@ -153,23 +156,6 @@ abstract class DslBuilder(private val isActual: Boolean) {
                 FunSpec
                     .builder("km${message.capitalizedName}")
                     .addModifiers(KModifier.INLINE)
-                    .addModifiers(KModifier.EXPECT)
-                    .addParameter(
-                        "builderDsl",
-                        LambdaTypeName.get(
-                            receiver = dslBuilderClassType,
-                            returnType = Unit::class.asTypeName()
-                        )
-                    )
-                    .returns(message.commonType)
-                    .build()
-            )
-        }else{
-            addTopLevelFunction(
-                FunSpec
-                    .builder("km${message.capitalizedName}")
-                    .addModifiers(KModifier.INLINE)
-                    .addModifiers(KModifier.ACTUAL)
                     .addParameter(
                         "builderDsl",
                         LambdaTypeName.get(

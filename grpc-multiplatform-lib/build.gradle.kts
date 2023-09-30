@@ -146,4 +146,3 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
     }
 }
 
-tasks.replace("podGenIOS", PatchedPodGenTask::class)
